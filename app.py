@@ -6,7 +6,6 @@ from binance.enums import *
 
 app = Flask(__name__)
 
-#client = Client(config.API_KEY, config.API_SECRET, tld='us')
 client = Client(config.API_KEY, config.API_SECRET, tld = 'com')
 
 def order(side, quantity, symbol, order_type=ORDER_TYPE_MARKET):
