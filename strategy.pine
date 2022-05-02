@@ -1,0 +1,78 @@
+//
+//@author mnzs
+//@version=5
+//
+
+n1 = input(10, "Channel Length")
+n2 = input(21, "Average Length")
+obLevel1 = input(60, "Over Bought Level 1")
+obLevel2 = input(53, "Over Bought Level 2")
+osLevel1 = input(-60, "Over Sold Level 1")
+osLevel2 = input(-53, "Over Sold Level 2")
+ 
+ap = hlc3 
+esa = ta.ema(ap, n1)
+d = ta.ema(math.abs(ap - esa), n1)
+ci = (ap - esa) / (0.015 * d)
+tci = ta.ema(ci, n2)
+ 
+wt1 = tci
+wt2 = ta.sma(wt1,4)
+
+var openValue = 0.0
+
+//Strategy
+
+strategy(title="Wave Trend Strategy", overlay=true, default_qty_value=0.01,  initial_capital=30, commission_type = strategy.commission.percent, commission_value = 0.01, calc_on_every_tick = true)
+shortCondition  = ta.crossover(wt1, wt2)
+longCondition = ta.crossunder(wt1, wt2)
+
+ema200 = ta.ema(close,200)
+atr = 5*ta.atr(200)
+
+start_date = input.time(timestamp("26 Apr 2022 00:00 +0530"), "Start Date")
+//end_date = input.time(timestamp("16 Apr 2022 08:00 +0530"), "End Date")
+end_date = time
+
+//if(close > 0.995*ema200 or close < 1.005*ema200)
+//    close_trades = true
+//else
+//    close_trades = false
+
+if(time > start_date and time <= end_date)
+
+    shortSL = openValue + (0.5*atr)
+    longSL = openValue - (0.5*atr)
+    shortTP = openValue - (2*atr)
+    longTP = openValue + (2*atr)
+
+    //if(close >= 1.005 * ema200)
+    //    strategy.entry("long entry", strategy.long, when = longCondition)
+    //    strategy.close("long entry", qty_percent = 100, when = shortCondition)
+    //    if (longCondition)
+    //        openValue := close
+    //else if(close <= 0.995 * ema200)
+    //    strategy.entry("short entry", strategy.short, when = shortCondition)
+    //    strategy.close("short entry", qty_percent = 100, when = longCondition)
+    //    if (shortCondition)
+    //        openValue := close
+    //else
+    //    strategy.close_all( when = (close > 0.995*ema200 or close < 1.005*ema200))
+
+
+    if((close >= 1.005 * ema200) or (close <= 0.995 * ema200))
+        strategy.entry("long entry", strategy.long, when = longCondition)
+        strategy.close("long entry", qty_percent = 100, when = shortCondition)
+        strategy.entry("short entry", strategy.short, when = shortCondition)
+        strategy.close("short entry", qty_percent = 100, when = longCondition)
+        if (longCondition)
+            openValue := close
+        if (shortCondition)
+            openValue := close
+
+
+    // strategy.close("long entry", qty_percent = 100, when = close < longSL, comment = "Long SL")
+    // strategy.close("short entry", qty_percent = 100, when = close > shortSL, comment = "Short SL")
+    // strategy.close("long entry", qty_percent = 100, when = close > longTP, comment = "Long TP")
+    // strategy.close("short entry", qty_percent = 100, when = close < shortTP, comment = "Short TP")
+plot(na)
