@@ -1,3 +1,4 @@
+import datetime
 import json, config
 from flask import Flask, request, render_template
 from binance.client import Client
@@ -27,6 +28,16 @@ def webhook():
     #print(request.data)
     data = json.loads(request.data)
     
+    def write_json(new_data, filename='log.json'):
+        with open(filename,'r+') as file:
+            file_data = json.load(file)
+            file_data.append(new_data)
+            file.seek(0)
+            json.dump(file_data, file, indent = 4)
+        logJSON = order_response.append(datetime.now)
+    write_json(logJSON)
+
+
     if data['passphrase'] != config.WEBHOOK_PASSPHRASE:
         return {
             "code": "error",
@@ -36,6 +47,8 @@ def webhook():
     side = data['strategy']['order_action'].upper()
     quantity = data['strategy']['order_contracts']
     order_response = order(side, quantity, "ETHUSDT")
+
+    
 
     if order_response:
         return {
@@ -49,3 +62,9 @@ def webhook():
             "code": "error",
             "message": "order failed"
         }
+
+
+    
+    
+
+        
