@@ -27,16 +27,7 @@ def webhook():
     #print(request.data)
     data = json.loads(request.data)
     
-    def write_json(new_data, filename='log.json'):
-        with open(filename,'r+') as file:
-            file_data = json.load(file)
-            file_data.append(new_data)
-            file.seek(0)
-            json.dump(file_data, file, indent = 4)
-        logJSON = order_response.append(datetime.now)
-    write_json(logJSON)
-
-
+    
     if data['passphrase'] != config.WEBHOOK_PASSPHRASE:
         return {
             "code": "error",
@@ -47,7 +38,8 @@ def webhook():
     quantity = data['strategy']['order_contracts']
     order_response = order(side, quantity, "ETHUSDT")
 
-    
+    with open('log.json', 'a', encoding='utf-8') as f:
+        json.dump(order_response, f, ensure_ascii=False, indent=4)
 
     if order_response:
         return {

@@ -1,6 +1,6 @@
 {
-    "passphrase": "abcdefgh",
-    "time": "{timenow}}",
+    "passphrase": "7dfe2e8dae0e6f46ac68ed7ad02f37b5950e0205603f28da8b60fe746d328d40",
+    "time": "{{timenow}}",
     "exchange": "{{exchange}}",
     "ticker": "{{ticker}}",
     "bar": {
